@@ -6,7 +6,7 @@ public class TestBase {
     static void setUp() {
         Configuration.browserSize = "1920x1980";
         Configuration.pageLoadStrategy = "eager";
-        Configuration.timeout = 10000;
-        Configuration.baseUrl = "https://www.detmir.ru/";
+        Configuration.timeout = 20000;
+        Configuration.holdBrowserOpen = true;
     }
 }
