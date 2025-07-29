@@ -1,19 +1,13 @@
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
+import static com.codeborne.selenide.CollectionCondition.sizeGreaterThan;
 import static com.codeborne.selenide.Condition.text;
-import static com.codeborne.selenide.Selenide.$;
-import static com.codeborne.selenide.Selenide.open;
+import static com.codeborne.selenide.Selenide.*;
 
 public class LitresListing extends TestBase {
-
-//    @Test
-//    void checkingTheListing () {
-//        open("https://www.detmir.ru/");
-//        $("li[role=\"menuitem\"][data-dy=\"magnifier\"] button.qr.ft span").click();
-//    }
-
 
 
     @CsvSource(value = {
@@ -23,8 +17,18 @@ public class LitresListing extends TestBase {
     @ParameterizedTest(name = "Для поискового запроса {0} название листинга должно быть {1}")
     @Tag("WEB")
     void checkingTheListing (String searchQuery, String nameListing) {
-        open("https://www.litres.ru/");
         $(".SearchForm-module__hMZOXa__input").setValue(searchQuery).pressEnter();
        $("#pageTitle").shouldHave(text(nameListing));
+    }
+
+    @ValueSource(strings = {
+            "Фантастика", "История"
+    })
+    @ParameterizedTest(name = "Для поискового запроса {0} должны отображаться найденные карточки товара")
+    @Tag("WEB")
+    @Tag("REGRESS")
+    void searchResultsShouldNotBeEmpty(String searchQuery) {
+        $(".SearchForm-module__hMZOXa__input").setValue(searchQuery).pressEnter();
+        $$("[data-testid='art__wrapper']").shouldBe(sizeGreaterThan(0));
     }
 }
