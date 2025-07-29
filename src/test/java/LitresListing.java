@@ -1,6 +1,8 @@
+import data.Chapter;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import static com.codeborne.selenide.CollectionCondition.sizeGreaterThan;
@@ -16,9 +18,9 @@ public class LitresListing extends TestBase {
     })
     @ParameterizedTest(name = "Для поискового запроса {0} название листинга должно быть {1}")
     @Tag("WEB")
-    void checkingTheListing (String searchQuery, String nameListing) {
+    void checkingTheListing(String searchQuery, String nameListing) {
         $(".SearchForm-module__hMZOXa__input").setValue(searchQuery).pressEnter();
-       $("#pageTitle").shouldHave(text(nameListing));
+        $("#pageTitle").shouldHave(text(nameListing));
     }
 
     @ValueSource(strings = {
@@ -31,4 +33,15 @@ public class LitresListing extends TestBase {
         $(".SearchForm-module__hMZOXa__input").setValue(searchQuery).pressEnter();
         $$("[data-testid='art__wrapper']").shouldBe(sizeGreaterThan(0));
     }
+
+    @Tag("REGRESS")
+    @ParameterizedTest(name = "Для раздела {0} должно отображаться корректное название страницы")
+    @EnumSource(Chapter.class)
+    void onPageShouldDisplayCorrectText(Chapter chapter) {
+        open("https://www.litres.ru/");
+        $$(".LowerMenu-module__tITX-W__lowerMenu__inner a").findBy(text(chapter.name())).click();
+        $("[data-testid='pageTitle']").shouldHave(text(chapter.description));
+    }
+
+
 }
